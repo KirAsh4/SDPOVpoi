@@ -22,6 +22,11 @@
 * THE SOFTWARE.
 */
 
+// Battery check
+// This will show a battery voltage gauge when the unit is first turned on
+#define BATTERY_GAUGE
+
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include "revisions.h";
@@ -76,8 +81,6 @@ union SD_buffer_t {
 const uint8_t      SdChipSelect     = SS;
 const uint8_t      errorLED         = 5;
 const uint8_t      STRIP_PWR        = 8;
-const uint8_t      battPin          = A0;
-const uint8_t      battReadings     = 20;
 
 volatile uint8_t   myError          = 0;
 volatile uint8_t   cntr             = 0;
@@ -85,10 +88,6 @@ volatile uint8_t   brightnessLevel  = 1;
 volatile uint8_t   fireState        = 0;
 volatile int8_t    fireStyle        = 1;
 volatile uint16_t  battIdx          = 0;
-volatile uint16_t  battTot          = 0;
-volatile uint16_t  battTop          = 0;
-volatile uint16_t  battAvg          = 0;
-volatile uint16_t  battVal          = 0;
 volatile uint16_t  pause            = 100;
 volatile uint16_t  myRefresh        = 0;
 volatile uint16_t  fileStatus       = 0;
@@ -96,6 +95,13 @@ volatile uint32_t  builtinLastRun   = 0;
 volatile uint32_t  refreshLastRun   = 0;
 volatile uint32_t  errorLastRun     = 0;
 volatile bool      SDCARD           = 1;  // assume card is present and readable, can catch errors later
+
+const uint8_t      battPin          = A0;
+const uint8_t      battReadings     = 20;
+volatile uint16_t  battTot          = 0;
+volatile uint16_t  battTop          = 0;
+volatile uint16_t  battAvg          = 0;
+volatile uint16_t  battVal          = 0;
 
 // Available error codes:
 // 1 - Low battery
@@ -125,9 +131,12 @@ void setup() {
 	//LEDS.show();
 	_delay_ms(5);
 
-	if (!batteryCheck()) {
-		myError = 1;
-	}
+#ifdef BATTERY_GAUGE
+#include "batteryStatus.h"
+if (!batteryCheck()) {
+	myError = 1;
+}
+#endif
 
 	if (!sd.begin(SdChipSelect, SPI_FULL_SPEED)) {
 		// Can't read SD card - is it inserted?
@@ -150,42 +159,6 @@ static void resetString(uint8_t state) {
 	memset(leds, 0, NUM_LEDS * sizeof(struct CRGB));
 	if (state) {
 		LEDS.show();
-	}
-}
-
-static uint8_t batteryCheck() {
-	// Battery Check - takes 2 seconds to take readings!!
-	for (uint8_t c = 0; c < battReadings; c++) {
-		battVal = analogRead(battPin);
-		battTot = battTot + battVal;
-		_delay_ms(100);
-	}
-	battAvg = battTot / battReadings;
-
-	if (battAvg < 569) {
-		return 0;
-	}
-	else {
-		// 5V   = 1023   -> 204.60 per volt
-		// 4.2V = 859.32 -> round to 859  ! with 10K series resistor, this reading drops to 814 !
-		// 3.0V = 613.80 -> round to 614  ! with 10K series resistor, this reading drops to 569 !  <-- 3.0V safe cut-off
-		// 2.8V = 572.88 -> round to 573  ! with 10K series resistor, this reading drops to 528 !
-		battTop = map(battAvg, 569, 814, 0, 48);
-		// Set PWR_ON pin high, turn strips on to display power level
-		digitalWrite(STRIP_PWR, HIGH);
-		_delay_ms(5);
-		fill_rainbow(&(leds[0]), battTop, 0, 2);
-		LEDS.setBrightness(16);
-		LEDS.show();
-		_delay_ms(SECOND);
-		LEDS.setBrightness(64);
-		resetString(1);
-		// memset(leds, 0, NUM_LEDS * sizeof(struct CRGB));
-		// LEDS.show();
-		// Set PWR_ON pin low, turn strips off
-		//_delay_ms(5);
-		//digitalWrite(STRIP_PWR, LOW);
-		return 1;
 	}
 }
 
