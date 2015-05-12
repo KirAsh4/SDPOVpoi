@@ -22,10 +22,15 @@
 * THE SOFTWARE.
 */
 
+#include "globals.h"
+
 // Battery check
 // This will show a battery voltage gauge when the unit is first turned on
 #define BATTERY_GAUGE
 
+#ifdef BATTERY_GAUGE
+#include "batteryStatus.h"
+#endif
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -96,13 +101,6 @@ volatile uint32_t  refreshLastRun   = 0;
 volatile uint32_t  errorLastRun     = 0;
 volatile bool      SDCARD           = 1;  // assume card is present and readable, can catch errors later
 
-const uint8_t      battPin          = A0;
-const uint8_t      battReadings     = 20;
-volatile uint16_t  battTot          = 0;
-volatile uint16_t  battTop          = 0;
-volatile uint16_t  battAvg          = 0;
-volatile uint16_t  battVal          = 0;
-
 // Available error codes:
 // 1 - Low battery
 // 2 - Can't open file
@@ -132,7 +130,6 @@ void setup() {
 	_delay_ms(5);
 
 #ifdef BATTERY_GAUGE
-#include "batteryStatus.h"
 if (!batteryCheck()) {
 	myError = 1;
 }

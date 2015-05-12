@@ -9,6 +9,8 @@
 #ifndef BATTERYSTATUS_H_
 #define BATTERYSTATUS_H_
 
+#include <stdint.h>
+
 static uint8_t batteryCheck() {
 	// Battery Check - takes 2 seconds to take readings!!
 	for (uint8_t c = 0; c < battReadings; c++) {
