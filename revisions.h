@@ -22,4 +22,9 @@
 * Initial attempt at GitHub
 */
 
+/* 2015-05-18
+* Removal of battery gauge control into separate header
+* with the goal of selectively adding it in or not
+*/
+
 #endif /* REVISIONS_H_ */
