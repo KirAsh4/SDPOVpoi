@@ -22,6 +22,7 @@
 * THE SOFTWARE.
 */
 
+#define __DELAY_BACKWARD_COMPATIBLE__
 #include "globals.h"
 
 // Battery check
@@ -130,9 +131,30 @@ void setup() {
 	_delay_ms(5);
 
 #ifdef BATTERY_GAUGE
-if (!batteryCheck()) {
-	myError = 1;
-}
+	battAvg = batteryCheck();
+	if (battAvg < 569) {
+		myError = 1;
+	}
+	else {
+		// 5V   = 1023   -> 204.60 per volt
+		// 4.2V = 859.32 -> round to 859  ! with 10K series resistor, this reading drops to 814 !
+		// 3.0V = 613.80 -> round to 614  ! with 10K series resistor, this reading drops to 569 !  <-- 3.0V safe cut-off
+		// 2.8V = 572.88 -> round to 573  ! with 10K series resistor, this reading drops to 528 !
+		battTop = map(battAvg, 569, 814, 0, 48);
+		// Set PWR_ON pin high, turn strips on to display power level
+		digitalWrite(STRIP_PWR, HIGH);
+		_delay_ms(5);
+		fill_rainbow(&(leds[0]), battTop, 0, 2);
+		LEDS.setBrightness(16);
+		LEDS.show();
+		_delay_ms(SECOND);
+		LEDS.setBrightness(64);
+		resetString(1);
+		// Set PWR_ON pin low, turn strips off
+		// THIS IS CURRENTLY NOT WORKING, CHECK HARDWARE
+		//_delay_ms(5);
+		//digitalWrite(STRIP_PWR, LOW);
+	}
 #endif
 
 	if (!sd.begin(SdChipSelect, SPI_FULL_SPEED)) {
