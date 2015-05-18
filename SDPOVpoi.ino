@@ -27,7 +27,10 @@
 
 // Battery check
 // This will show a battery voltage gauge when the unit is first turned on
+// Turn on gauge display
 #define BATTERY_GAUGE
+// Turn off gauge diaplsy
+// #undef BATTERY_GUAGE
 
 #ifdef BATTERY_GAUGE
 #include "batteryStatus.h"
