@@ -8,6 +8,7 @@
 #ifndef REVISIONS_H_
 #define REVISIONS_H_
 
+
 /* 2014-04
 * Initial version 1
 */
@@ -21,6 +22,8 @@
 /* 2015-05-11
 * Initial attempt at GitHub
 */
+
+/* Begin v2.0 build */
 
 /* 2015-05-18
 * Removal of battery gauge control into separate header

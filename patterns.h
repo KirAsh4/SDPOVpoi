@@ -13,6 +13,7 @@ const    uint8_t  MAX_PATTERNS   = 12;
 volatile uint8_t  pattern        = 0;
 volatile uint32_t patternLastRun = 0;
 
+// Intermittent rainbow wheel based on HSV color
 static void HSVRainbowWheel() {
 	static uint8_t hue = 0;
 	static uint8_t off = 0;
@@ -28,6 +29,23 @@ static void HSVRainbowWheel() {
 	}
 }
 
+// Like intermittent rainbow wheel but with brighter starting edge
+static void HSVEdges() {
+	static uint8_t hue = 0;
+	if (millis() - patternLastRun > 27) {
+		patternLastRun = millis();
+		hue += 15;
+		} else if (millis() - patternLastRun > 25) {
+		fill_solid(&(leds[0]), 48, CHSV(0, 0, 0));
+		} else if (millis() - patternLastRun > 5) {
+		fill_solid(&(leds[0]), 48, CHSV(hue, 255, 50));
+		} else {
+		fill_solid(&(leds[0]), 48, CHSV(hue, 255, 255));
+	}
+	LEDS.show();
+}
+
+// Rainbow spiral based on HSV colors
 static void HSVRainbowSpiral() {
 	static uint8_t hue = 0;
 	static uint8_t cntr = 0;
@@ -52,22 +70,8 @@ static void HSVRainbowSpiral() {
 	}
 }
 
-static void HSVEdges() {
-	static uint8_t hue = 0;
-	if (millis() - patternLastRun > 27) {
-		patternLastRun = millis();
-		hue += 15;
-		} else if (millis() - patternLastRun > 25) {
-		fill_solid(&(leds[0]), 48, CHSV(0, 0, 0));
-		} else if (millis() - patternLastRun > 5) {
-		fill_solid(&(leds[0]), 48, CHSV(hue, 255, 50));
-		} else {
-		fill_solid(&(leds[0]), 48, CHSV(hue, 255, 255));
-	}
-	LEDS.show();
-}
-
-static void rainbowWheel() {
+// Five color triangles
+static void colorTriangles() {
 	static uint8_t hue      = 0;
 	static uint8_t strBegin = 0;
 	static uint8_t strEnd   = 0;
@@ -83,6 +87,7 @@ static void rainbowWheel() {
 	}
 }
 
+// Red, White, and Blue lines
 static void RedWhiteBlue() {
 	if (millis() - patternLastRun > 30) {
 		patternLastRun = millis();
@@ -102,6 +107,7 @@ static void RedWhiteBlue() {
 	LEDS.show();
 }
 
+// HSV diamonds with frames
 static void flowerPower() {
 	static int8_t  increment = 1;
 	static uint8_t cntr      = 0;
@@ -119,6 +125,7 @@ static void flowerPower() {
 	//if (cntr < 1) increment = -increment;
 }
 
+// Flashers
 static void flashers() {
 	if (millis() - patternLastRun > 10) {
 		leds[random8(NUM_LEDS)] = CHSV(random8(255), 255, 255);
@@ -130,6 +137,7 @@ static void flashers() {
 	}
 }
 
+// HSV diamonds
 static void diamonds() {
 	static int8_t  cntr      = 0;
 	static int8_t  increment = 1;
@@ -147,6 +155,7 @@ static void diamonds() {
 	}
 }
 
+// HSV ranbow arrow heads
 static void rainbowArrows() {
 	static int8_t  cntr  = 0;
 	static int8_t  incr  = 1;
@@ -173,6 +182,7 @@ static void rainbowArrows() {
 	_delay_us(200);
 }
 
+// Random color spokes
 static void randomSpokes() {
 	static uint8_t hue     = 120;
 	static int8_t  incr    = 10;
@@ -208,6 +218,7 @@ static void randomSpokes() {
 	}
 }
 
+// Random HSV stripes
 static void randomStripes() {
 	static uint8_t  done        = 0;
 	static uint8_t  values[6]   = {};
@@ -245,9 +256,8 @@ static void randomStripes() {
 	LEDS.show();
 }
 
-
+// Random wheel Divisions
 #define ARRAY_LENGTH(A) (sizeof(A)/sizeof(*A))
-
 CRGB wheelColors[] = {0xFF003B, 0x1600E8, 0x00FFCB, 0xA6E800, 0xFF9700, 0x000000};
 
 CRGB getWheelColor() {
@@ -298,6 +308,7 @@ static void wheelDivisions() {
 	LEDS.show();
 }
 
+// Fire code!
 // CRGB HeatColor( uint8_t temperature)
 // [to be included in the forthcoming FastLED v2.1]
 //
@@ -381,7 +392,6 @@ CRGB HeatColor( uint8_t temperature, int8_t style) {
 // Higher chance = more roaring fire.  Lower chance = more flickery fire.
 // Default 120, suggested range 50-200.
 #define SPARKING 120
-
 
 static void Fire2012(int8_t style) {
 	// Array of temperature readings at each simulation cell

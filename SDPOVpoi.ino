@@ -133,7 +133,7 @@ void setup() {
 	//LEDS.show();
 	_delay_ms(5);
 
-#ifdef BATTERY_GAUGE
+	#ifdef BATTERY_GAUGE
 	battAvg = batteryCheck();
 	if (battAvg < 569) {
 		myError = 1;
@@ -158,7 +158,7 @@ void setup() {
 		//_delay_ms(5);
 		//digitalWrite(STRIP_PWR, LOW);
 	}
-#endif
+	#endif
 
 	if (!sd.begin(SdChipSelect, SPI_FULL_SPEED)) {
 		// Can't read SD card - is it inserted?
@@ -200,18 +200,18 @@ static void brightness() {
 static void displayPattern(uint8_t pattern) {
 	// patterns.h:MAX_PATTERNS must match the same number of patterns listed here
 	switch (pattern) {
-		case  1: HSVRainbowWheel();  break;
-		case  2: RedWhiteBlue();     break;
-		case  3: HSVEdges();         break;
-		case  4: flashers();         break;
-		case  5: HSVRainbowSpiral(); break;
-		case  6: flowerPower();      break;
-		case  7: randomSpokes();     break;
-		case  8: rainbowWheel();     break;
-		case  9: rainbowArrows();    break;
-		case 10: randomStripes();    break;
-		case 11: diamonds();         break;
-		case 12: wheelDivisions();   break;
+		case  1: HSVRainbowWheel();		break;
+		case  2: RedWhiteBlue();		break;
+		case  3: HSVEdges();			break;
+		case  4: flashers();			break;
+		case  5: HSVRainbowSpiral();	break;
+		case  6: flowerPower();			break;
+		case  7: randomSpokes();		break;
+		case  8: colorTriangles();		break;
+		case  9: rainbowArrows();		break;
+		case 10: randomStripes();		break;
+		case 11: diamonds();			break;
+		case 12: wheelDivisions();		break;
 	}
 }
 
