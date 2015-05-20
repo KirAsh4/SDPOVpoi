@@ -23,7 +23,11 @@
 */
 
 #define __DELAY_BACKWARD_COMPATIBLE__
+#include <avr/io.h>
+#include <util/delay.h>
+
 #include "globals.h"
+#include "revisions.h";
 
 // Battery check
 // This will show a battery voltage gauge when the unit is first turned on
@@ -35,10 +39,6 @@
 #ifdef BATTERY_GAUGE
 #include "batteryStatus.h"
 #endif
-
-#include <avr/io.h>
-#include <util/delay.h>
-#include "revisions.h";
 
 // OneButton
 #include <OneButton.h>
@@ -315,9 +315,9 @@ void loop() {
 
 			// Get tokens from control fileData
 			// [0] = fileName
-			// [1] = imgRefresh - PAUSE BETWEEN THE SAME IMAGE (secs)
-			// [2] = imgTimeout - TIME BEFORE CHANGING TO NEXT IMAGE (secs)
-			// [3] = displayPause - TIME TO PAUSE WHEN MOVING TO NEXT IMAGE (secs)
+			// [1] = imgRefresh - PAUSE BETWEEN THE SAME IMAGE (in seconds)
+			// [2] = imgTimeout - TIME BEFORE CHANGING TO NEXT IMAGE (in seconds)
+			// [3] = displayPause - TIME TO PAUSE WHEN MOVING TO NEXT IMAGE (in seconds)
 			char *fileName = strtok(fileData, "|\t ");
 			imgRefresh = atof(strtok(NULL, "|\t "));
 			imgTimeout = atof(strtok(NULL, "|\t "));
