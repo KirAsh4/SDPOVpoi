@@ -137,8 +137,7 @@ void setup() {
 	battAvg = batteryCheck();
 	if (battAvg < 569) {
 		myError = 1;
-	}
-	else {
+	} else {
 		// 5V   = 1023   -> 204.60 per volt
 		// 4.2V = 859.32 -> round to 859  ! with 10K series resistor, this reading drops to 814 !
 		// 3.0V = 613.80 -> round to 614  ! with 10K series resistor, this reading drops to 569 !  <-- 3.0V safe cut-off
@@ -229,8 +228,7 @@ static void getFileData() {
 	if (fileStatus < 0) {
 		myError = 3;
 		return;
-	}
-	else if (fileStatus == 0) {
+		} else if (fileStatus == 0) {
 		// End of file reached, rewind to beginning of file
 		cntlFile.seekSet(0);
 		// Read filename again

@@ -22,7 +22,7 @@ static void HSVRainbowWheel() {
 		patternLastRun = millis();
 		off = 0;
 		hue += 10;
-		} else if ((millis() - patternLastRun > 5) && (!off)) {
+	} else if ((millis() - patternLastRun > 5) && (!off)) {
 		LEDS.showColor(CHSV(0, 0, 0));
 		patternLastRun = millis();
 		off = 1;
@@ -35,11 +35,11 @@ static void HSVEdges() {
 	if (millis() - patternLastRun > 27) {
 		patternLastRun = millis();
 		hue += 15;
-		} else if (millis() - patternLastRun > 25) {
+	} else if (millis() - patternLastRun > 25) {
 		fill_solid(&(leds[0]), 48, CHSV(0, 0, 0));
-		} else if (millis() - patternLastRun > 5) {
+	} else if (millis() - patternLastRun > 5) {
 		fill_solid(&(leds[0]), 48, CHSV(hue, 255, 50));
-		} else {
+	} else {
 		fill_solid(&(leds[0]), 48, CHSV(hue, 255, 255));
 	}
 	LEDS.show();
